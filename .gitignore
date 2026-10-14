@@ -1,0 +1,15 @@
+#Visual Studio user settings and cache
+.vs/
+*.user
+*.suo
+
+#Build output
+**/bin/
+**/obj/
+
+#Generated summary report
+summary.txt
+
+#Temporary and log files
+*.log
+*.tmp
