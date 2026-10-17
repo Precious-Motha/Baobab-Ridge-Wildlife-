@@ -1,0 +1,25 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+job:
+  build:
+    runs-on: windows-latest
+
+step:
+  - name: Checkout out repository
+      uses: actions/checkout@v4
+
+ - name: Setup .NET 10
+   uses: actions/setup-dotnet@v4
+   with: dotnet-version: 10.0.x
+
+-name: Restore dependencies
+  run: dotnet restore BaobabRidge/BaobabRidge.csproj
+
+-name: Build project
+  run: dotnet build BaobabRidge/BaobabRidge.csproj --configuration Release --no-restore
