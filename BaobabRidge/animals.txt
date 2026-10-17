@@ -1,0 +1,8 @@
+BRW-01|Luna|Owl|2|15|Critical|Intensive Care Unit
+BRW-02|Max|Fox|3|28|Serious|High-Dependency Ward
+BRW-03|Bella|Hare|1|45|Stable|Recovery Ward
+BRW-04|Rocky|Eagle|4|67|Recovering|Outdoor Enclosure
+BRW-05|Coco|Tortoise|8|92|Release-Ready|Pre-Release Camp
+BRW-06|Milo|Hedgehog|1|35|Serious|High-Dependency Ward
+BRW-07|Daisy|Owl|2|55|Stable|Recovery Ward
+BRW-08|Shadow|Fox|3|75|Recovering|Outdoor Enclosure
