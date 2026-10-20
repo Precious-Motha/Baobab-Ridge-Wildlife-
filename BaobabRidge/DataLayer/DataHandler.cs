@@ -1,98 +1,122 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Windows;
 
-public class DataManager
+namespace BaobabRidge.DataLayer
 {
-    private readonly string filePath;
-    private List<string> records;
-
-    public DataManager(string filePath)
+    public class DataManager
     {
-        this.filePath = filePath;
-        LoadFile();
-    }
+        private readonly string filePath;
+        private List<string> records;
 
-    //Load the file into memory
-    public void LoadFile()
-    {
-        records=new List<string>();//ensure a gracefull fail by leaving a empty list if file load fails and if no file exists
-        try
+        public DataManager(string filePath)
         {
+            this.filePath = filePath;
+            LoadFile();
+        }
 
-            if (File.Exists(filePath))
+        public void LoadFile()
+        {
+            records = new List<string>();
+            try
             {
-                records = new List<string>(File.ReadAllLines(filePath));
+
+                if (File.Exists(filePath))
+                {
+                    records = new List<string>(File.ReadAllLines(filePath));
+                }
+                else{
+                    File.Create(filePath);
+                    records= new List<string>();
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("An error occurred on load file: " + e.ToString());
+                MessageBox.Show("An error has occured on loading file", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        catch(Exception e){
-            System.Diagnostics.Debug.WriteLine("An error occurred on load file: "+e.ToString());
-            MessageBox.Show("An error has occured on loading file","ERROR",MessageBoxButtons.OK,MessageBoxIcon.Error);
-        }
-    }
 
-    //used to push changes from the list back to the text file
-    private void SaveToFile()
-    {
-        try {
-            File.WriteAllLines(filePath, records);
-        }
-        catch (Exception e){
-        System.Diagnostics.Debug.WriteLine("An error occurred on Save file: " + e.ToString());
-        MessageBox.Show("An error has occured on Saving file", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        
-    }
 
-    //adding a new record into the list then updating the text file
-    public void AppendRecord(string record)
-    {
-        records.Add(record);
-        SaveToFile();
-    }
-
-    //finds a list of record containing a search term
-    public List<string> FindRecords(string searchTerm)
-    {
-        return records.FindAll(r => r.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
-    }
-
-    //updates a record on a specified index
-    public bool UpdateRecord(int index, string updatedRecord)
-    {
-        if (index >= 0 && index < records.Count)
+        public void SaveToFile(DataTable dataTable)
         {
-            records[index] = updatedRecord;
-            SaveToFile();
-            return true;
-        }
-        return false; //out of bounds
-    }
+            try
+            {   
+                
+                File.WriteAllLines(filePath, DataTableToList(dataTable));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("An error occurred on Save file: " + e.ToString());
+                MessageBox.Show("An error has occured on Saving file", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
-    // deletes a record on a specified index
-    public bool DeleteRecord(int index)
-    {
-        if (index >= 0 && index < records.Count)
+        }
+
+        public  List<string> DataTableToList(DataTable dataTable)
         {
-            records.RemoveAt(index);
-            SaveToFile();
-            return true;
+            List<string> stringList = new List<string>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                // Extract each value safely, handling potential null/DBNull values
+                string id = row["ID"]?.ToString() ?? "";
+                string name = row["Name"]?.ToString() ?? "";
+                string species = row["Species"]?.ToString() ?? "";
+                string age = row["Age"]?.ToString() ?? "";
+                string recoveryScore = row["RecoveryScore"]?.ToString() ?? "";
+                string status = row["Status"]?.ToString() ?? "";
+                string housingUnit = row["HousingUnit"]?.ToString() ?? "";
+
+                // Reconstruct the pipe-separated string
+                string line = $"{id} | {name} | {species} | {age} | {recoveryScore} | {status} | {housingUnit}";
+
+                stringList.Add(line);
+            }
+
+            return stringList;
         }
-        return false; //out of bounds
-    }
 
-    // returns all records as a string
-    // Evrioment.newline returns the right newline for wherever the programming is running
-    public string PrintAllRecords()
-    {
-        return string.Join(Environment.NewLine, records);
-    }
+        public  DataTable GetDataTable()
+        {
+            DataTable dataTable = new DataTable("Records");
 
-    // Returns the index of the first match, or -1 if nothing is found
-    public int FindFirstIndex(string searchTerm)
-    {
-        return records.FindIndex(r => r.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
-    }
+            dataTable.Columns.Add("ID", typeof(string));
+            dataTable.Columns.Add("Name", typeof(string));
+            dataTable.Columns.Add("Species", typeof(string));
+            dataTable.Columns.Add("Age", typeof(string));           
+            dataTable.Columns.Add("RecoveryScore", typeof(string)); 
+            dataTable.Columns.Add("Status", typeof(string));
+            dataTable.Columns.Add("HousingUnit", typeof(string));
 
+
+            foreach (var line in records)
+            {
+                string[] values = line.Split('|');
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = values[i].Trim();
+                }
+
+                if (values.Length >= 7)
+                {
+                    DataRow row = dataTable.NewRow();
+                    row["ID"] = values[0];
+                    row["Name"] = values[1];
+                    row["Species"] = values[2];
+                    row["Age"] = int.TryParse(values[3], out int age) ? age : (object)DBNull.Value;
+                    row["RecoveryScore"] = int.TryParse(values[4], out int score) ? score : (object)DBNull.Value;
+                    row["Status"] = values[5];
+                    row["HousingUnit"] = values[6];
+
+                    dataTable.Rows.Add(row);
+                }
+            }
+
+            return dataTable;
+        }
+
+    }
 }
