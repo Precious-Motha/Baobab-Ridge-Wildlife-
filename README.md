@@ -1,115 +1,129 @@
 # Baobab Ridge Wildlife Rehabilitation Records System
 
+## Project Overview
 
+The Baobab Ridge Wildlife Rehabilitation Records System is a C# Windows Forms desktop application designed to help a wildlife rehabilitation centre manage animal records and monitor their recovery progress.
 
-#### **Project Overview**
+The system allows users to add, view, update and delete animal records, as well as generate summary reports. It uses plain text files to store animal information and Git and GitHub to manage source code, track changes and support collaboration among group members.
 
-The Baobab Ridge Wildlife Rehabilitation Record System is a C# Windows Forms desktop application designed to help a wildlife rehabilitation centre manage animal records and monitor their recovery progress. The system allows users to add, view, update and delete animal records. Animal information is stored in plain text files, while Git and GitHub are used to manage the project's source code and development history.
+## Group Members
 
+1. Precious Motha (603981)
+2. Chabeli Peter Rathulo (604046)
+3. Christiaan De Jagar (603754)
+4. Cj Bruwer (603655)
 
+## Project Status
 
-#### **Group Members**
+The project is complete, with the application designed to support animal record management, recovery classification and summary reporting. The system uses a layered architecture to separate the presentation, business logic and data handling.
 
-1. Precious Motha(603981)
-2. Chabeli Peter Rathulo(604046)
-3. Christiaan De Jagar(603754)
-4. Cj Bruwer(603655)
+## Requirements
 
+- Programming Language: C#
+- User Interface: Windows Forms
+- Framework: .NET 8.0 or newer
+- Development Environment: Visual Studio
+- Version Control: Git and GitHub
+- Data Storage: Plain text files
+- Database: Not required
 
+## Build and Run
 
-#### **Project Status**
+1. Install Visual Studio with the .NET desktop development workload.
+2. Clone the GitHub repository to your local computer.
+3. Open `BaobabRidge.slnx` in Visual Studio.
+4. Allow the project dependencies to restore.
+5. Select Build → Build Solution.
+6. Run the application using the Start button in Visual Studio.
 
+## Features
 
+- Add Animal: Enter animal details, validate the information and calculate the animal's recovery status and housing unit.
+- View Animals: Display animal records in a read-only data grid.
+- Update Animal: Find an existing animal and update its details while preserving its ID.
+- Delete Animal: Remove an animal record after confirmation.
+- Summary Report: Display the total number of animals, average age, average recovery score and the number of animals in each recovery status.
 
-Initial project setup. Features will be added as development progresses.
+## Animal Recovery Classification
 
+The recovery score determines the animal's status and assigned housing unit.
 
+| Recovery Score | Status        | Housing Unit         |
+| -------------- | ------------- | -------------------- |
+| 0–19           | Critical      | Intensive Care Unit  |
+| 20–39          | Serious       | High-Dependency Ward |
+| 40–59          | Stable        | Recovery Ward        |
+| 60–79          | Recovering    | Outdoor Enclosure    |
+| 80–100         | Release-Ready | Pre-Release Camp     |
 
-#### **Requirements**
+## Data Formats
 
+### animals.txt
 
+The `animals.txt` file stores animal records in plain text format.
 
-* Programming language: C#
-* User interface: Windows Forms
-* Framework: .NET 8.0 or newer
-* Development environment: Visual Studio
-* Version control: Git and GitHub
-* Data storage: Plain text files; no database.
+- Each line represents one animal record.
 
-#### **Build and Run**
+- The file uses UTF-8 text encoding.
 
+- The pipe character (`|`) separates seven fields in the following order:
 
+  `ID|Name|Species|Age|Score|Status|Housing Unit`
 
-1. Instal Visual Studio with the .NET desktop development workload.
-2. Clone the GitHub repository.
-3. Open BaobabRidge.slnx in Visual Studio.
-4. Allow The project dependencies to restore.
-5. Build the solution.
-6. Run the application from Visual Studio
+- Animal IDs must start with `WR-` followed by exactly four digits, for example, `WR-0001`.
 
-#### 
+- The file includes starter records supplied with the project.
 
-#### **Features**
+- The file is stored in the same directory as the running application.
 
+- The file must not contain a header row or blank lines.
 
+### summary.txt
 
-* Add Animal: Enter animal details, validate the information, and calculate status and housing unit.
-* View Animal: Display animal records in a read-only table
-* Update Animal: Find and Update an existing animal's details.
-* Delete Animal: Remove an animal after confirmation
-* Summary Report: Display animal totals, average age, average recovery score, and counts for each status.
+The `summary.txt` file contains the generated summary report.
 
+- Includes the report timestamp, total number of animals, average age, average recovery score and counts for all recovery statuses.
+- Is overwritten whenever a new summary report is generated.
+- Is stored beside the running application.
+- Is generated by the application and should not be committed to Git.
 
+## Validation and Error Handling
 
-#### **Data Formats**
+- Input Validation: Rejects missing or invalid values and displays clear validation messages.
+- Animal ID Validation: Checks the required ID format and prevents duplicate IDs.
+- Missing Data File: Creates `animals.txt` if it does not exist.
+- Malformed Records: Skips invalid records and reports how many were skipped.
+- File Access Errors: Handles file access problems and displays appropriate error messages.
+- Update and Delete Operations: Checks whether the selected animal exists and requests confirmation before deletion.
+- Summary Report: Handles an empty animal list and displays `N/A` for averages when no records exist.
 
-**Animals.txt**
+## Project Structure
 
-* Stores one animal per line
-* Uses UTF-8 text encoding
-* Uses the pipe character (|) to separate seven fields in this order:
+The project uses a layered architecture to separate responsibilities.
 
-&#x20;  *ID | Name | Species | Age | Score | Status | Housing*
+- Presentation Layer: Contains the Windows Forms interface and handles user interaction.
+- Business Layer: Contains the animal recovery classification and related business rules.
+- Data Layer: Handles reading and writing animal records to plain text files.
 
-* Includes starter records supplied with the project.
-* Is stored alongside the running application.
+## Version Control
 
+Git and GitHub are used to manage source code and support collaboration among group members. Development work is organised using branches and pull requests to track changes and support code review.
 
+The `.gitignore` file should exclude generated build files, Visual Studio temporary files and the generated `summary.txt` report.
 
-**Summary.txt**
+## Known Limitations
 
-* Generated when the summary report is created.
-* Contains the report timestamp, total animals, averages, and counts per status.
-* Is overwritten when a new summary is generated.
-* Is generated beside the running application and does not need to be committed to Git.
+- Animal records are stored in plain text files rather than a database.
+- Records are stored locally alongside the application.
+- The system does not provide online access or multi-user synchronisation.
+- The application depends on the availability and accessibility of its local data files.
 
+## Future Improvements and Lessons Learned
 
+During development, challenges were encountered with connecting the presentation, business and data layers, resolving coding errors, validating animal records, and ensuring that data was saved and retrieved correctly from text files. Additional challenges involved organising project files, managing duplicate files, maintaining consistent class names and namespaces, and resolving build errors in Visual Studio.
 
-#### **Error Handling**
+These challenges highlighted the importance of understanding the role of each layer, maintaining a clear project structure, and testing changes before integrating them into the main project. They also demonstrated the value of using Git and GitHub to manage branches, track changes and maintain a reliable development history.
 
-Input validation: Rejects invalid or missing values with a clear message.
+Future improvements could include expanding automated testing, and improving the application's maintainability. Further attention could also be given to keeping the repository well-organised and build-ready by removing unnecessary duplicate files, documenting setup instructions and verifying that the solution builds successfully from a clean checkout.
 
-Animal ID validation: Checks required format and uniqueness.
-
-Missing Data File: Creates animal.txt if does not exist.
-
-Malformed records: Skips malformed lines and reports how many were skipped.
-
-File access errors: Handles file problems without crashing
-
-Update and Delete operations: Reports missing animals and confirms deletions.
-
-Summery report: Handles empty records and displays N/A for averages.
-
-
-
-
-
-#### 
-
-#### **Known Limitations** 
-
-
-
-The application is currently at the initial setup stage.
-
+If the system is expanded in the future, additional features such as user authentication, more detailed recovery reports and secure shared storage could be considered.
